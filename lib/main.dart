@@ -34,6 +34,7 @@ class MaterialAppWithTheme extends StatelessWidget {
       initialRoute: 'home',
       routes: {
         'home': (context) => const HomeScreen(),
+        'details': (context) => const DetailsScreen(),
       },
     );
   }
