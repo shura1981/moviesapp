@@ -6,14 +6,19 @@ class DetailsScreen extends StatelessWidget {
   const DetailsScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Result movie = ModalRoute.of(context)!.settings.arguments as Result;
+    final params =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    Result movie = params['movie'] as Result;
+    String id = params['id'] as String;
+
     return Scaffold(
         body: CustomScrollView(
       slivers: [
         _CustomAppBar(movie: movie),
         SliverList(
           delegate: SliverChildListDelegate([
-            _PosterAndTitle(movie: movie),
+            _PosterAndTitle(movie: movie, id: id),
             const SizedBox(height: 20),
             _Overview(movie),
             const SizedBox(height: 20),
@@ -52,6 +57,12 @@ class _CustomAppBar extends StatelessWidget {
             color: Colors.black26,
             child: Text(movie.title)),
         background: FadeInImage(
+            imageErrorBuilder: (context, error, stackTrace) {
+              return Image.network(
+                'https://i.stack.imgur.com/GNhxO.png',
+                fit: BoxFit.cover,
+              );
+            },
             alignment: Alignment.topCenter,
             fit: BoxFit.cover,
             placeholder: Image.asset('assets/img/loading.gif').image,
@@ -65,8 +76,10 @@ class _PosterAndTitle extends StatelessWidget {
   _PosterAndTitle({
     Key? key,
     required this.movie,
+    required this.id,
   }) : super(key: key);
   Result movie;
+  String id;
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -79,11 +92,14 @@ class _PosterAndTitle extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: FadeInImage(
-                height: 150,
-                fit: BoxFit.cover,
-                placeholder: Image.asset('assets/img/no-image.jpg').image,
-                image: Image.network(movie.fullPosterImg).image),
+            child: Hero(
+              tag: id,
+              child: FadeInImage(
+                  height: 150,
+                  fit: BoxFit.cover,
+                  placeholder: Image.asset('assets/img/no-image.jpg').image,
+                  image: Image.network(movie.fullPosterImg).image),
+            ),
           ),
           const SizedBox(
             width: 12,

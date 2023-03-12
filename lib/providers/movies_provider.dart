@@ -16,7 +16,7 @@ class MoviesProvier with ChangeNotifier {
   bool _isLoad = false;
   getOnDisplayMovies() async {
     try {
-      final result = await get('now_playing', 1);
+      final result = await get('movie/now_playing', 1);
       final Movies movies = moviesFromJson(result);
       listMovies = movies.results;
       notifyListeners();
@@ -32,7 +32,7 @@ class MoviesProvier with ChangeNotifier {
     _page++;
     try {
       _isLoad = true;
-      final result = await get('popular', _page);
+      final result = await get('movie/popular', _page);
       final MoviesPopular movies = moviesPopularFromJson(result);
       listMoviesPopular = [...listMoviesPopular, ...movies.results];
       notifyListeners();
@@ -46,7 +46,7 @@ class MoviesProvier with ChangeNotifier {
   Future<List<Cast>?> getMovieCast(int movieId) async {
     try {
       if (movieCast.containsKey(movieId)) return movieCast[movieId];
-      final result = await get('$movieId/credits', _page);
+      final result = await get('movie/$movieId/credits', _page);
       final Creditos credits = creditosFromJson(result);
       movieCast[movieId] = credits.cast;
       return credits.cast;
@@ -55,10 +55,27 @@ class MoviesProvier with ChangeNotifier {
     }
   }
 
-  Future<String> get(String path, int page) async {
+  Future<List<Result>?> searchMovie(String movie) async {
+    if (_isLoad == true) {
+      return null;
+    }
+    try {
+      _isLoad = true;
+      final result = await get('search/movie', _page, movie);
+      final SearchMovie movies = searchMovieFromJson(result);
+      print(movies);
+      return movies.results;
+    } catch (e) {
+      rethrow;
+    } finally {
+      _isLoad = false;
+    }
+  }
+
+  Future<String> get(String path, int page, [String query = '']) async {
     try {
       final url = Uri.parse(
-          'https://api.themoviedb.org/3/movie/$path?api_key=$_apiKey&language=$_language&page=$page');
+          'https://api.themoviedb.org/3/$path?api_key=$_apiKey&language=$_language&page=$page&query=$query');
       final response = await http.get(url);
       if (response.statusCode != 200) throw Exception('404 no encontrado');
       return response.body;

@@ -59,7 +59,7 @@ class _MovieSliderState extends State<MovieSlider> {
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               Result movie = widget.moviesPopular[index];
-              return _MoviePoster(movie: movie);
+              return _MoviePoster(movie: movie, index: index);
             },
           ),
         ),
@@ -70,13 +70,16 @@ class _MovieSliderState extends State<MovieSlider> {
 
 class _MoviePoster extends StatelessWidget {
   Result movie;
+  int index;
   _MoviePoster({
     Key? key,
     required this.movie,
+    required this.index,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    UniqueKey id = UniqueKey();
     return Container(
       width: 140,
       height: 190,
@@ -85,16 +88,23 @@ class _MoviePoster extends StatelessWidget {
         child: Column(children: [
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, 'details', arguments: movie);
+              Map<String, dynamic> arg = {
+                'movie': movie,
+                'id': '${movie.id}$index'
+              };
+              Navigator.pushNamed(context, 'details', arguments: arg);
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: FadeInImage(
-                  width: double.infinity,
-                  height: 190,
-                  fit: BoxFit.cover,
-                  placeholder: Image.asset('assets/img/no-image.jpg').image,
-                  image: Image.network(movie.fullPosterImg).image),
+              child: Hero(
+                tag: '${movie.id}$index',
+                child: FadeInImage(
+                    width: double.infinity,
+                    height: 190,
+                    fit: BoxFit.cover,
+                    placeholder: Image.asset('assets/img/no-image.jpg').image,
+                    image: Image.network(movie.fullPosterImg).image),
+              ),
             ),
           ),
           const SizedBox(height: 5),
