@@ -81,16 +81,20 @@ class ItemMovie extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
+        movie.heroId = 'search-${movie.id}';
         Navigator.pushNamed(context, 'details', arguments: movie);
       },
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: FadeInImage(
-            height: 64,
-            width: 64,
-            fit: BoxFit.cover,
-            placeholder: Image.asset('assets/img/no-image.jpg').image,
-            image: Image.network(movie.fullPosterImg).image),
+      leading: Hero(
+        tag: 'search-${movie.id}',
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: FadeInImage(
+              height: 64,
+              width: 64,
+              fit: BoxFit.cover,
+              placeholder: Image.asset('assets/img/no-image.jpg').image,
+              image: Image.network(movie.fullPosterImg).image),
+        ),
       ),
       title: Text(movie.title),
       subtitle: Text(movie.originalTitle),

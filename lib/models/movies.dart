@@ -95,6 +95,7 @@ class Result {
   bool video;
   double voteAverage;
   int voteCount;
+  String? heroId;
   get fullPosterImg {
     if (posterPath != null) {
       return 'https://image.tmdb.org/t/p/w500/$posterPath';
