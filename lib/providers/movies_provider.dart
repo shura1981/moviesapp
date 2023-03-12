@@ -15,13 +15,13 @@ class MoviesProvier with ChangeNotifier {
   final String _language = 'es-Es';
   final int _page = 1;
   List<Result> listMovies = [];
-  List<ResultPopular> listMoviesPopular = [];
+  List<Result> listMoviesPopular = [];
   getOnDisplayMovies() async {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/movie/now_playing?api_key=$_apiKey&language=$_language&page=$_page');
     try {
       final result = await get(url);
-        final Movies movies = moviesFromJson(result);
+      final Movies movies = moviesFromJson(result);
       listMovies = movies.results;
       notifyListeners();
     } catch (e) {
@@ -35,7 +35,7 @@ class MoviesProvier with ChangeNotifier {
     try {
       final result = await get(url);
       final MoviesPopular movies = moviesPopularFromJson(result);
-      listMoviesPopular = movies.results;
+      listMoviesPopular = [...listMoviesPopular, ...movies.results];
       notifyListeners();
     } catch (e) {
       print(e);

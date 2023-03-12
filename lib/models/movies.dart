@@ -69,12 +69,12 @@ class Result {
     required this.backdropPath,
     required this.genreIds,
     required this.id,
-    required this.originalLanguage,
+    this.originalLanguage,
     required this.originalTitle,
     required this.overview,
     required this.popularity,
     this.posterPath,
-     this.releaseDate,
+    this.releaseDate,
     required this.title,
     required this.video,
     required this.voteAverage,
@@ -85,7 +85,7 @@ class Result {
   String backdropPath;
   List<int> genreIds;
   int id;
-  OriginalLanguage originalLanguage;
+  OriginalLanguage? originalLanguage;
   String originalTitle;
   String overview;
   double popularity;
@@ -109,12 +109,12 @@ class Result {
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         id: json["id"],
         originalLanguage:
-            originalLanguageValues.map[json["original_language"]]!,
+            originalLanguageValues.map[json["original_language"]] ?? OriginalLanguage.EN,
         originalTitle: json["original_title"],
         overview: json["overview"],
         popularity: json["popularity"]?.toDouble(),
         posterPath: json["poster_path"],
-        releaseDate:  json["release_date"],
+        releaseDate: json["release_date"],
         title: json["title"],
         video: json["video"],
         voteAverage: json["vote_average"]?.toDouble(),

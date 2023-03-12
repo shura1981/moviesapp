@@ -1,35 +1,34 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:flutter/material.dart';
-import 'package:moviesapp/models/movies_popular.dart';
 
 import '../models/movies.dart';
 
 class MovieSlider extends StatelessWidget {
-  MovieSlider({
-    Key? key,
-    required this.moviesPopular,
-  }) : super(key: key);
-  List<ResultPopular> moviesPopular = [];
+  MovieSlider({Key? key, required this.moviesPopular, this.title})
+      : super(key: key);
+  List<Result> moviesPopular = [];
+  String? title;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 260,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            'Populares',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        if (title != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              title!,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
         const SizedBox(height: 5),
         Expanded(
           child: ListView.builder(
             itemCount: moviesPopular.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
-              ResultPopular movie = moviesPopular[index];
+              Result movie = moviesPopular[index];
               return _MoviePoster(movie: movie);
             },
           ),
@@ -40,7 +39,7 @@ class MovieSlider extends StatelessWidget {
 }
 
 class _MoviePoster extends StatelessWidget {
-  ResultPopular movie;
+  Result movie;
   _MoviePoster({
     Key? key,
     required this.movie,
