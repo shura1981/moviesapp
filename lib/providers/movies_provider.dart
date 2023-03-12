@@ -13,14 +13,12 @@ class MoviesProvier with ChangeNotifier {
   }
   final String _apiKey = '1865f43a0549ca50d341dd9ab8b29f49';
   final String _language = 'es-Es';
-  final int _page = 1;
+  int _page = 0;
   List<Result> listMovies = [];
   List<Result> listMoviesPopular = [];
   getOnDisplayMovies() async {
-    final url = Uri.parse(
-        'https://api.themoviedb.org/3/movie/now_playing?api_key=$_apiKey&language=$_language&page=$_page');
     try {
-      final result = await get(url);
+      final result = await get('now_playing');
       final Movies movies = moviesFromJson(result);
       listMovies = movies.results;
       notifyListeners();
@@ -30,10 +28,8 @@ class MoviesProvier with ChangeNotifier {
   }
 
   getOnDisplayMoviesPopular() async {
-    final url = Uri.parse(
-        'https://api.themoviedb.org/3/movie/popular?api_key=$_apiKey&language=$_language&page=$_page');
     try {
-      final result = await get(url);
+      final result = await get('popular');
       final MoviesPopular movies = moviesPopularFromJson(result);
       listMoviesPopular = [...listMoviesPopular, ...movies.results];
       notifyListeners();
@@ -42,8 +38,11 @@ class MoviesProvier with ChangeNotifier {
     }
   }
 
-  Future<String> get(Uri url) async {
+  Future<String> get(String path) async {
     try {
+      _page++;
+      final url = Uri.parse(
+          'https://api.themoviedb.org/3/movie/$path?api_key=$_apiKey&language=$_language&page=$_page');
       final response = await http.get(url);
       if (response.statusCode != 200) throw Exception('404 no encontrado');
       return response.body;

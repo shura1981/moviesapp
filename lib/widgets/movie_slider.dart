@@ -3,32 +3,64 @@ import 'package:flutter/material.dart';
 
 import '../models/movies.dart';
 
-class MovieSlider extends StatelessWidget {
-  MovieSlider({Key? key, required this.moviesPopular, this.title})
+class MovieSlider extends StatefulWidget {
+  MovieSlider(
+      {Key? key,
+      required this.moviesPopular,
+      this.title,
+      required this.onNextpage})
       : super(key: key);
   List<Result> moviesPopular = [];
   String? title;
+  Function onNextpage;
+  @override
+  State<MovieSlider> createState() => _MovieSliderState();
+}
+
+class _MovieSliderState extends State<MovieSlider> {
+  final scrollController = ScrollController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    scrollController.addListener(() {
+      final position = scrollController.position;
+      if (position.pixels >= (position.maxScrollExtent - 500)) {
+        widget.onNextpage();
+        print('hacer petición');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 260,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (title != null)
+        if (widget.title != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
-              title!,
+              widget.title!,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
         const SizedBox(height: 5),
         Expanded(
           child: ListView.builder(
-            itemCount: moviesPopular.length,
+            controller: scrollController,
+            itemCount: widget.moviesPopular.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
-              Result movie = moviesPopular[index];
+              Result movie = widget.moviesPopular[index];
               return _MoviePoster(movie: movie);
             },
           ),
