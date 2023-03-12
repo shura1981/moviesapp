@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviesapp/providers/movies_provider.dart';
 import 'package:moviesapp/providers/theme_changer.dart';
 import 'package:moviesapp/screens/screens.dart';
 import 'package:moviesapp/theme/theme.dart';
@@ -14,6 +15,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(providers: [
       ChangeNotifierProvider(
           create: (context) => ThemeChanger(AppTheme.lightTheme)),
+           ChangeNotifierProvider(
+          create: (context) => MoviesProvier(), lazy: false),
     ], child: const MaterialAppWithTheme());
   }
 }

@@ -1,8 +1,16 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:card_swiper/card_swiper.dart';
+import 'package:flutter/material.dart';
+
+import 'package:moviesapp/models/movies.dart';
 
 class CardSwiper extends StatelessWidget {
-  const CardSwiper({Key? key}) : super(key: key);
+  List<Result> movies = [];
+
+  CardSwiper({
+    Key? key,
+    required this.movies
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,18 +19,22 @@ class CardSwiper extends StatelessWidget {
       width: double.infinity,
       height: size.height * 0.5,
       child: Swiper(
-        itemCount: 10,
+        itemCount: movies.length,
         layout: SwiperLayout.STACK,
         itemWidth: size.width * 0.6,
         itemHeight: size.height * 0.4,
         itemBuilder: (context, index) {
+          Result movie = movies[index];
           return GestureDetector(
-            onTap: () => Navigator.pushNamed(context, 'details', arguments: 'movie-instance'),
+            onTap: () => Navigator.pushNamed(context, 'details',
+                arguments: 'movie-instance'),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: FadeInImage(placeholder: Image.asset('assets/img/no-image.jpg').image, image: Image.network('https://es.web.img2.acsta.net/pictures/19/02/05/12/55/5474956.jpg').image,
-              fit: BoxFit.cover,
-              )),
+                borderRadius: BorderRadius.circular(20),
+                child: FadeInImage(
+                  placeholder: Image.asset('assets/img/no-image.jpg').image,
+                  image: Image.network(movie.fullPosterImg).image,
+                  fit: BoxFit.cover,
+                )),
           );
         },
       ),

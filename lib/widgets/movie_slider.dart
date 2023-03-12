@@ -1,8 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:moviesapp/models/movies_popular.dart';
+
+import '../models/movies.dart';
 
 class MovieSlider extends StatelessWidget {
-  const MovieSlider({Key? key}) : super(key: key);
-
+  MovieSlider({
+    Key? key,
+    required this.moviesPopular,
+  }) : super(key: key);
+  List<ResultPopular> moviesPopular = [];
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -19,9 +26,12 @@ class MovieSlider extends StatelessWidget {
         const SizedBox(height: 5),
         Expanded(
           child: ListView.builder(
-            itemCount: 20,
+            itemCount: moviesPopular.length,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => _MoviePoster(),
+            itemBuilder: (context, index) {
+              ResultPopular movie = moviesPopular[index];
+              return _MoviePoster(movie: movie);
+            },
           ),
         ),
       ]),
@@ -30,6 +40,12 @@ class MovieSlider extends StatelessWidget {
 }
 
 class _MoviePoster extends StatelessWidget {
+  ResultPopular movie;
+  _MoviePoster({
+    Key? key,
+    required this.movie,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,13 +65,12 @@ class _MoviePoster extends StatelessWidget {
                 height: 190,
                 fit: BoxFit.cover,
                 placeholder: Image.asset('assets/img/no-image.jpg').image,
-                image:
-                    Image.network('https://via.placeholder.com/300x400').image),
+                image: Image.network(movie.fullPosterImg).image),
           ),
         ),
         const SizedBox(height: 5),
-        const Text(
-          'Starwars: EL retorno del nuevo Jedi silvestre de Monte',
+        Text(
+          movie.title,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
           // textAlign: TextAlign.center,
