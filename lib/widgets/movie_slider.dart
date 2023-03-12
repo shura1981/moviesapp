@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:flutter/material.dart';
-
-import '../models/movies.dart';
+import 'package:moviesapp/models/models.dart';
 
 class MovieSlider extends StatefulWidget {
   MovieSlider(
@@ -27,7 +26,6 @@ class _MovieSliderState extends State<MovieSlider> {
       final position = scrollController.position;
       if (position.pixels >= (position.maxScrollExtent - 500)) {
         widget.onNextpage();
-        print('hacer petición');
       }
     });
   }
@@ -83,30 +81,31 @@ class _MoviePoster extends StatelessWidget {
       width: 140,
       height: 190,
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, 'details',
-                arguments: 'movie-instance');
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: FadeInImage(
-                width: double.infinity,
-                height: 190,
-                fit: BoxFit.cover,
-                placeholder: Image.asset('assets/img/no-image.jpg').image,
-                image: Image.network(movie.fullPosterImg).image),
+      child: SingleChildScrollView(
+        child: Column(children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, 'details', arguments: movie);
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: FadeInImage(
+                  width: double.infinity,
+                  height: 190,
+                  fit: BoxFit.cover,
+                  placeholder: Image.asset('assets/img/no-image.jpg').image,
+                  image: Image.network(movie.fullPosterImg).image),
+            ),
           ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          movie.title,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-          // textAlign: TextAlign.center,
-        )
-      ]),
+          const SizedBox(height: 5),
+          Text(
+            movie.title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            // textAlign: TextAlign.center,
+          )
+        ]),
+      ),
     );
   }
 }

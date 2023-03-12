@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:moviesapp/models/movies_popular.dart';
-
-import '../models/movies.dart';
+import 'package:moviesapp/models/models.dart';
 
 class MoviesProvier with ChangeNotifier {
   MoviesProvier() {
@@ -16,9 +12,10 @@ class MoviesProvier with ChangeNotifier {
   int _page = 0;
   List<Result> listMovies = [];
   List<Result> listMoviesPopular = [];
+  bool _isLoad = false;
   getOnDisplayMovies() async {
     try {
-      final result = await get('now_playing');
+      final result = await get('now_playing', 1);
       final Movies movies = moviesFromJson(result);
       listMovies = movies.results;
       notifyListeners();
@@ -28,21 +25,27 @@ class MoviesProvier with ChangeNotifier {
   }
 
   getOnDisplayMoviesPopular() async {
+    if (_isLoad == true) {
+      return null;
+    }
+    _page++;
     try {
-      final result = await get('popular');
+      _isLoad = true;
+      final result = await get('popular', _page);
       final MoviesPopular movies = moviesPopularFromJson(result);
       listMoviesPopular = [...listMoviesPopular, ...movies.results];
       notifyListeners();
     } catch (e) {
       print(e);
+    } finally {
+      _isLoad = false;
     }
   }
 
-  Future<String> get(String path) async {
+  Future<String> get(String path, int page) async {
     try {
-      _page++;
       final url = Uri.parse(
-          'https://api.themoviedb.org/3/movie/$path?api_key=$_apiKey&language=$_language&page=$_page');
+          'https://api.themoviedb.org/3/movie/$path?api_key=$_apiKey&language=$_language&page=$page');
       final response = await http.get(url);
       if (response.statusCode != 200) throw Exception('404 no encontrado');
       return response.body;

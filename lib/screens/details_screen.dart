@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-
+import 'package:moviesapp/models/models.dart';
 import '../widgets/widgets.dart';
 
 class DetailsScreen extends StatelessWidget {
   const DetailsScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    final String movie =
-        ModalRoute.of(context)?.settings.arguments.toString() ?? 'no-movie';
+    Result movie = ModalRoute.of(context)!.settings.arguments as Result;
     return Scaffold(
         body: CustomScrollView(
       slivers: [
-        _CustomAppBar(),
+        _CustomAppBar(movie: movie),
         SliverList(
           delegate: SliverChildListDelegate([
-            const _PosterAndTitle(),
-            _Overview(),
-            _Overview(),
-            const CastingCards()
+            _PosterAndTitle(movie: movie),
+            const SizedBox(height: 20),
+            _Overview(movie),
+            const SizedBox(height: 20),
+            CastingCards(movie.id),
+            const SizedBox(height: 20),
           ]),
         )
       ],
@@ -27,6 +27,11 @@ class DetailsScreen extends StatelessWidget {
 }
 
 class _CustomAppBar extends StatelessWidget {
+  Result movie;
+  _CustomAppBar({
+    Key? key,
+    required this.movie,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     const double toolbarHeight = 45;
@@ -43,30 +48,34 @@ class _CustomAppBar extends StatelessWidget {
             width: double.infinity,
             height: double.infinity,
             alignment: Alignment.bottomCenter,
-            padding: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(10),
             color: Colors.black26,
-            child: const Text('movie.title')),
+            child: Text(movie.title)),
         background: FadeInImage(
+            alignment: Alignment.topCenter,
             fit: BoxFit.cover,
             placeholder: Image.asset('assets/img/loading.gif').image,
-            image: Image.network(
-                    'http://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSK7tFSJPsJW3XXDj8x64bnNc6-tv846qOPV5X5RFXOyPovh40XkngoEcaAp4zomnIN')
-                .image),
+            image: Image.network(movie.fullPosterImg).image),
       ),
     );
   }
 }
 
 class _PosterAndTitle extends StatelessWidget {
-  const _PosterAndTitle({Key? key}) : super(key: key);
-
+  _PosterAndTitle({
+    Key? key,
+    required this.movie,
+  }) : super(key: key);
+  Result movie;
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      color: const Color.fromARGB(255, 239, 239, 239),
       child: Row(
+        mainAxisSize: MainAxisSize.max,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -74,40 +83,44 @@ class _PosterAndTitle extends StatelessWidget {
                 height: 150,
                 fit: BoxFit.cover,
                 placeholder: Image.asset('assets/img/no-image.jpg').image,
-                image:
-                    Image.network('https://via.placeholder.com/200x300').image),
+                image: Image.network(movie.fullPosterImg).image),
           ),
           const SizedBox(
-            width: 20,
+            width: 12,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'movie.title',
-                style: textTheme.headlineMedium,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-              Text(
-                'movie.title',
-                style: textTheme.bodySmall,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.star_outlined, size: 15, color: Colors.grey),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    'movie.voteAverage',
-                    style: textTheme.bodySmall,
-                  )
-                ],
-              )
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  movie.title,
+                  style: textTheme.headlineSmall,
+                  softWrap: false,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis, //
+                ),
+                Text(
+                  movie.originalTitle,
+                  style: textTheme.bodySmall,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.star_outlined,
+                        size: 15, color: Colors.grey),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      movie.voteAverage.toString(),
+                      style: textTheme.bodySmall,
+                    )
+                  ],
+                )
+              ],
+            ),
           )
         ],
       ),
@@ -116,12 +129,14 @@ class _PosterAndTitle extends StatelessWidget {
 }
 
 class _Overview extends StatelessWidget {
+  _Overview(this.movie);
+  Result movie;
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Text(
-        'Nisi Lorem deserunt enim deserunt sint exercitation dolor nostrud. Veniam est occaecat esse irure cupidatat mollit aliquip pariatur aliqua consectetur ipsum aute occaecat sint. Do ex est enim id aliqua esse consectetur anim eiusmod aliqua ex consectetur id anim. Nisi incididunt ipsum sit adipisicing adipisicing laborum aliquip.',
+        movie.overview,
         textAlign: TextAlign.justify,
         style: Theme.of(context).textTheme.titleMedium,
       ),
