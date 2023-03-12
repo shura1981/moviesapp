@@ -55,7 +55,7 @@ class _CustomAppBar extends StatelessWidget {
             alignment: Alignment.topCenter,
             fit: BoxFit.cover,
             placeholder: Image.asset('assets/img/loading.gif').image,
-            image: Image.network(movie.fullPosterImg).image),
+            image: Image.network(movie.fullbackdropPath).image),
       ),
     );
   }

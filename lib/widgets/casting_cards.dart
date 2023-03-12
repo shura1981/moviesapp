@@ -1,25 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:moviesapp/providers/movies_provider.dart';
+import 'package:provider/provider.dart';
+
+import '../models/models.dart';
 
 class CastingCards extends StatelessWidget {
   CastingCards(this.id, {super.key});
   int id;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 30),
-      height: 180,
-      width: double.infinity,
-      child: ListView.builder(
-          itemCount: 10,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => const _CastCard()),
+    final provider = Provider.of<MoviesProvier>(context, listen: false);
+    return FutureBuilder(
+      future: provider.getMovieCast(id),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text(''),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          final List<Cast>? listCast = snapshot.data;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 30),
+            height: 180,
+            width: double.infinity,
+            child: ListView.builder(
+                itemCount: listCast!.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) => _CastCard(listCast[index])),
+          );
+        }
+        return const SizedBox(
+          height: 180,
+          width: double.infinity,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      },
     );
   }
 }
 
 class _CastCard extends StatelessWidget {
-  const _CastCard({Key? key}) : super(key: key);
-
+  _CastCard(this.cast, {Key? key}) : super(key: key);
+  Cast cast;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,13 +58,11 @@ class _CastCard extends StatelessWidget {
               height: 140,
               width: 100,
               placeholder: Image.asset('assets/img/no-image.jpg').image,
-              image: Image.network(
-                      'https://es.web.img2.acsta.net/pictures/19/02/05/12/55/5474956.jpg')
-                  .image),
+              image: Image.network(cast.fullPosterImg).image),
         ),
         const SizedBox(height: 5),
-        const Text(
-          'actor.name askk jksdjfksjdf',
+        Text(
+          cast.name,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,

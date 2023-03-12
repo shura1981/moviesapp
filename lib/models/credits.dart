@@ -53,7 +53,7 @@ class Cast {
   bool adult;
   int gender;
   int id;
-  Department knownForDepartment;
+  Department? knownForDepartment;
   String name;
   String originalName;
   double popularity;
@@ -68,7 +68,7 @@ class Cast {
     if (profilePath != null) {
       return 'https://image.tmdb.org/t/p/w500/$profilePath';
     } else {
-      return 'https://i.stack.imgur.com/GNhxO.png';
+      return 'https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg';
     }
   }
 
@@ -76,18 +76,20 @@ class Cast {
         adult: json["adult"],
         gender: json["gender"],
         id: json["id"],
-        knownForDepartment: departmentValues.map[json["known_for_department"]]!,
+        knownForDepartment: ( (json["knownForDepartment"]!=null) ?  departmentValues.map[json["department"]] : departmentValues.map['Writing']),
         name: json["name"],
         originalName: json["original_name"],
         popularity: json["popularity"]?.toDouble(),
         profilePath: json["profile_path"],
-        castId: json["cast_id"],
-        character: json["character"],
-        creditId: json["credit_id"],
+        castId: json["cast_id"] ?? 0,
+        character: json["character"] ?? '',
+        creditId: json["credit_id"] ?? '',
         order: json["order"],
-        department: departmentValues.map[json["department"]]!,
-        job: json["job"],
+        department: ( (json["department"]!=null) ?  departmentValues.map[json["department"]] : departmentValues.map['Writing']),
+        job: json["job"] ?? '',
       );
+  // json["department"] ?  departmentValues.map[json["department"]] :
+  // json["department"]
 
   Map<String, dynamic> toJson() => {
         "adult": adult,

@@ -66,7 +66,7 @@ class Dates {
 class Result {
   Result({
     required this.adult,
-    required this.backdropPath,
+    this.backdropPath,
     required this.genreIds,
     required this.id,
     this.originalLanguage,
@@ -82,7 +82,7 @@ class Result {
   });
 
   bool adult;
-  String backdropPath;
+  String? backdropPath;
   List<int> genreIds;
   int id;
   OriginalLanguage? originalLanguage;
@@ -103,13 +103,22 @@ class Result {
     }
   }
 
+  get fullbackdropPath {
+    if (backdropPath != null) {
+      return 'https://image.tmdb.org/t/p/w500/$backdropPath';
+    } else {
+      return 'https://i.stack.imgur.com/GNhxO.png';
+    }
+  }
+
   factory Result.fromJson(Map<String, dynamic> json) => Result(
         adult: json["adult"],
         backdropPath: json["backdrop_path"] ?? '',
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         id: json["id"],
         originalLanguage:
-            originalLanguageValues.map[json["original_language"]] ?? OriginalLanguage.EN,
+            originalLanguageValues.map[json["original_language"]] ??
+                OriginalLanguage.EN,
         originalTitle: json["original_title"] ?? '',
         overview: json["overview"] ?? '',
         popularity: json["popularity"]?.toDouble(),

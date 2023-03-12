@@ -12,6 +12,7 @@ class MoviesProvier with ChangeNotifier {
   int _page = 0;
   List<Result> listMovies = [];
   List<Result> listMoviesPopular = [];
+  Map<int, List<Cast>> movieCast = {};
   bool _isLoad = false;
   getOnDisplayMovies() async {
     try {
@@ -39,6 +40,18 @@ class MoviesProvier with ChangeNotifier {
       print(e);
     } finally {
       _isLoad = false;
+    }
+  }
+
+  Future<List<Cast>?> getMovieCast(int movieId) async {
+    try {
+      if (movieCast.containsKey(movieId)) return movieCast[movieId];
+      final result = await get('$movieId/credits', _page);
+      final Creditos credits = creditosFromJson(result);
+      movieCast[movieId] = credits.cast;
+      return credits.cast;
+    } catch (e) {
+      rethrow;
     }
   }
 
