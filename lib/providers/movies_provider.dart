@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviesapp/helpers/debouncer.dart';
 import 'package:moviesapp/models/models.dart';
 
 class MoviesProvier with ChangeNotifier {
@@ -13,7 +17,32 @@ class MoviesProvier with ChangeNotifier {
   List<Result> listMovies = [];
   List<Result> listMoviesPopular = [];
   Map<int, List<Cast>> movieCast = {};
+  Map<String, List<Result>> searchList = {};
   bool _isLoad = false;
+
+  final StreamController<List<Result>> _suggestionStreamController =
+      StreamController.broadcast();
+  Stream<List<Result>> get sugestionStream =>
+      _suggestionStreamController.stream;
+  void closeStream() {
+    _suggestionStreamController.close();
+  }
+
+  final debouncer = Debouncer(duration:  const Duration(milliseconds: 500));
+
+  void getSugestionByQuery(String searchTerm) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      searchMovie(value)
+          .then((value) => _suggestionStreamController.add(value!));
+    };
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = searchTerm;
+    });
+    Future.delayed(const Duration(milliseconds: 301))
+        .then((_) => timer.cancel());
+  }
+
   getOnDisplayMovies() async {
     try {
       final result = await get('movie/now_playing', 1);
@@ -56,14 +85,18 @@ class MoviesProvier with ChangeNotifier {
   }
 
   Future<List<Result>?> searchMovie(String movie) async {
+    String key = base64.encode(utf8.encode(movie));
+    if (searchList.containsKey(key)) return searchList[key];
+
     if (_isLoad == true) {
       return null;
     }
+
     try {
       _isLoad = true;
       final result = await get('search/movie', _page, movie);
       final SearchMovie movies = searchMovieFromJson(result);
-      print(movies);
+      searchList[key] = movies.results;
       return movies.results;
     } catch (e) {
       rethrow;

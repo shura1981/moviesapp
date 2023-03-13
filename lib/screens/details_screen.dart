@@ -6,7 +6,6 @@ class DetailsScreen extends StatelessWidget {
   const DetailsScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-
     Result movie = ModalRoute.of(context)!.settings.arguments as Result;
 
     return Scaffold(
@@ -90,6 +89,12 @@ class _PosterAndTitle extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: FadeInImage(
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.network(
+                      'https://i.stack.imgur.com/GNhxO.png',
+                      fit: BoxFit.cover,
+                    );
+                  },
                   height: 150,
                   fit: BoxFit.cover,
                   placeholder: Image.asset('assets/img/no-image.jpg').image,
