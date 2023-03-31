@@ -54,6 +54,12 @@ class _CastCard extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: FadeInImage(
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.network(
+                  'https://i.stack.imgur.com/GNhxO.png',
+                  fit: BoxFit.cover,
+                );
+              },
               fit: BoxFit.cover,
               height: 140,
               width: 100,
