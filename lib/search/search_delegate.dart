@@ -75,8 +75,8 @@ class MovieSearchDelegate extends SearchDelegate {
 }
 
 class ItemMovie extends StatelessWidget {
-  ItemMovie({Key? key, required this.movie}) : super(key: key);
-  Result movie;
+  const ItemMovie({Key? key, required this.movie}) : super(key: key);
+ final Result movie;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -101,3 +101,7 @@ class ItemMovie extends StatelessWidget {
     );
   }
 }
+
+
+
+
